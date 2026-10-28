@@ -3,8 +3,6 @@
 A Vue 3 app for a Customer Success agent working through a restaurant's tasks. Switch tasks without losing notes,
 track the time spent on each one, and send the task ID and elapsed seconds to the imaginary backend on completion.
 
-The [original assignment](#the-task) is included below.
-
 ## Run it
 
 ```sh
