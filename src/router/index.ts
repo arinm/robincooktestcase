@@ -11,7 +11,7 @@ const router = createRouter({
             path: '/tasks/:taskId?',
             name: 'tasks',
             component: () => import('@/views/TasksView.vue'),
-            // a missing or non-numeric id means no task is selected.
+            // a missing or non-numeric id means no task is selected
             props: route => ({ taskId: Number(route.params.taskId) || null }),
         },
     ],

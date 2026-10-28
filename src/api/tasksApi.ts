@@ -3,18 +3,18 @@ import { useImaginaryBackend } from '@/composables/useImaginaryBackend'
 import { wait } from '@/utils/wait'
 import { taskSchema, type Task, type TaskId } from './taskSchema'
 
-// a slow save, so the "Saving…" state is real; it sits here because the store sets that state before this call.
+// simulated latency so "Saving…" is visible, the store sets it before calling this
 const SAVE_LATENCY_MS = 500
 
 const { loadDummyData, saveToImaginaryBackend } = useImaginaryBackend()
 
 export interface LoadedTasks {
     tasks: Task[]
-    // tasks the backend sent but validation rejected, repeated ids included.
+    // tasks the backend sent but validation rejected, repeated ids included
     invalidCount: number
 }
 
-// an invalid task is skipped instead of failing the whole list; so is a repeated id, which would share time, status and notes.
+// skips invalid tasks instead of failing the list, a repeated id would share time and notes
 export const parseTasks = (data: unknown): LoadedTasks => {
     const items = z.array(z.unknown()).parse(data)
 

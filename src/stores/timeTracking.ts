@@ -60,7 +60,6 @@ export const useTimeTrackingStore = defineStore('timeTracking', {
         },
 
         refreshNow() {
-            // ticks only refresh the UI, timestamps account for time in background tabs.
             this.now = Date.now()
         },
     },

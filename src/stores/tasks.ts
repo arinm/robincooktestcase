@@ -50,7 +50,7 @@ export const useTasksStore = defineStore('tasks', {
 
             if (timeTracking.runningTaskId === taskId) timeTracking.pause()
 
-            // frozen from here on, so a retry sends the same seconds.
+            // frozen from here on, so a retry sends the same seconds
             const timeSpentSeconds = timeTracking.elapsedSeconds(taskId)
             this.completionStatusById[taskId] = 'saving'
 

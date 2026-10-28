@@ -41,7 +41,6 @@ const notes = ref('')
 
 const status = computed(() => tasks.completionStatus(props.task.id))
 const completeLabel = computed(() => COMPLETE_LABELS[status.value])
-// also locks the notes: once saving starts, the task is done.
 const canComplete = computed(() => status.value === 'open' || status.value === 'failed')
 </script>
 

@@ -1,6 +1,5 @@
 import { z } from 'zod'
 
-// validates a task as the backend sends it and maps it to the shape the app uses.
 export const taskSchema = z
     .object({
         id: z.int().positive(),
