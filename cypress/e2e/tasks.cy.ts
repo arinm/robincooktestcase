@@ -117,8 +117,12 @@ describe('tasks', () => {
         cy.contains('Could not save your time. Please try again.')
         cy.contains('nav a', 'Anruf').should('not.contain', 'Completed')
 
-        // the timer stays frozen after the click, so waiting adds nothing.
+        // the unsaved task stays flagged after switching away; its timer stays frozen.
+        openTask('Dokumentation')
+        cy.contains('nav a', 'Anruf').should('contain', 'Not saved')
         cy.tick(3000)
+
+        openTask('Anruf')
         cy.contains('button', 'Try again').click()
         cy.tick(500)
 

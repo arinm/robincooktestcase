@@ -11,8 +11,7 @@
                 >
                     <span class="title">{{ item.title }}</span>
                     <span class="meta">
-                        <span v-if="item.isCompleted">Completed</span>
-                        <span v-else :class="{ overdue: item.isOverdue }">{{ item.dueLabel }}</span>
+                        <span :class="{ alert: item.isAlert }">{{ item.label }}</span>
                         <span class="time">{{ item.timeSpent }}</span>
                     </span>
                 </RouterLink>
@@ -25,7 +24,7 @@
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import type { Task } from '@/api/taskSchema'
-import { useTasksStore } from '@/stores/tasks'
+import { useTasksStore, type CompletionStatus } from '@/stores/tasks'
 import { useTimeTrackingStore } from '@/stores/timeTracking'
 import { formatDuration } from '@/utils/formatDuration'
 
@@ -35,21 +34,30 @@ const DUE_LABELS: Record<Task['due'], string> = {
     tomorrow: 'Due tomorrow',
 }
 
+const STATUS_LABELS: Record<Exclude<CompletionStatus, 'open'>, string> = {
+    saving: 'Saving…',
+    failed: 'Not saved',
+    completed: 'Completed',
+}
+
 const tasks = useTasksStore()
 const timeTracking = useTimeTrackingStore()
 
 const navItems = computed(() =>
-    tasks.tasks.map(task => ({
-        id: task.id,
-        title: task.title,
-        dueLabel: DUE_LABELS[task.due],
-        isOverdue: task.due === 'yesterday',
-        isCompleted: tasks.completionStatus(task.id) === 'completed',
-        timeSpent: formatDuration(timeTracking.elapsedSeconds(task.id)),
-    })),
+    tasks.tasks.map(task => {
+        const status = tasks.completionStatus(task.id)
+
+        return {
+            id: task.id,
+            title: task.title,
+            label: status === 'open' ? DUE_LABELS[task.due] : STATUS_LABELS[status],
+            isAlert: status === 'failed' || (status === 'open' && task.due === 'yesterday'),
+            isCompleted: status === 'completed',
+            timeSpent: formatDuration(timeTracking.elapsedSeconds(task.id)),
+        }
+    }),
 )
 
-// partial failure: the valid tasks are listed, the rejected ones are only counted.
 const invalidNotice = computed(() => {
     const count = tasks.invalidTaskCount
 
@@ -109,7 +117,7 @@ const invalidNotice = computed(() => {
     font-size: 0.85rem;
 }
 
-.overdue {
+.alert {
     color: var(--color-danger);
 }
 

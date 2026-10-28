@@ -13,6 +13,7 @@
             </div>
             <p v-else-if="tasks.loadStatus === 'loading'">Loading tasks…</p>
             <p v-else-if="!tasks.tasks.length">No tasks assigned to you right now.</p>
+            <p v-else-if="taskId !== null && !activeTask">This task could not be found.</p>
             <p v-else-if="!activeTask">Select a task to start tracking time.</p>
 
             <KeepAlive>
@@ -47,7 +48,7 @@ onMounted(async () => {
 
 const activeTask = computed(() => (props.taskId === null ? undefined : tasks.getTask(props.taskId)))
 
-// only an open task runs; once completing starts, its time stays frozen.
+// only an open task runs, once completing starts its time stays frozen
 const trackedTaskId = computed(() => {
     const task = activeTask.value
 

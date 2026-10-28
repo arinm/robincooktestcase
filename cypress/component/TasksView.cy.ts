@@ -2,7 +2,7 @@ import { mount } from 'cypress/vue'
 import { createPinia } from 'pinia'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import { tasksApi } from '@/api/tasksApi'
-import type { Task } from '@/api/taskSchema'
+import type { Task, TaskId } from '@/api/taskSchema'
 import TasksView from '@/views/TasksView.vue'
 
 const task: Task = {
@@ -14,14 +14,14 @@ const task: Task = {
 }
 
 // a fresh store and an in-memory router per test; the API answer is stubbed by each test.
-const mountTasksView = () => {
+const mountTasksView = (taskId: TaskId | null = null) => {
     const router = createRouter({
         history: createMemoryHistory(),
         routes: [{ path: '/tasks/:taskId?', name: 'tasks', component: TasksView }],
     })
 
     mount(TasksView, {
-        props: { taskId: null },
+        props: { taskId },
         global: { plugins: [createPinia(), router] },
     })
 }
@@ -55,5 +55,13 @@ describe('TasksView states', () => {
 
         cy.contains('nav a', 'Anruf')
         cy.contains('2 tasks could not be loaded.')
+    })
+
+    it('says so when the selected task does not exist', () => {
+        cy.stub(tasksApi, 'fetchTasks').resolves({ tasks: [task], invalidCount: 0 })
+
+        mountTasksView(99)
+
+        cy.contains('This task could not be found.')
     })
 })
